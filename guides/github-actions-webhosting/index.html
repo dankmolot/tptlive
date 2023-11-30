@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continious Deployment for TPT Webhosting</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&family=Montserrat&display=swap" rel="stylesheet"> 
+    <style>
+        :root {
+            --background: #292724;
+            --text: #fffcf2;
+            --bold-text: #fff;
+            --link: #eb5e28;
+            --code: #1b1a18;
+            --code-comment: #6e706b;
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--background);
+            color: var(--text);
+
+            font-family: 'Montserrat', monospace;
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+        }
+
+        b {
+            color: var(--bold-text);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        #container {
+            max-width: 850px;
+            margin: auto;
+            padding: 2em;
+        }
+
+        img {
+            display: block;
+            margin: auto;
+            width: 75%;
+        }
+
+        h2 {
+            margin-top: 4em;
+        }
+
+        a {
+            color: var(--link);
+        }
+        
+        code {
+            background-color: var(--code);
+            border-radius: 8px;
+            padding: 0.2em 0.4em;
+            font-family: monospace;
+        }
+        
+        /* https://css-tricks.com/styling-code-in-and-out-of-blocks/ */
+        pre code {
+            display: block;
+            padding: 1em;
+            white-space: pre;
+            -webkit-overflow-scrolling: touch;
+            overflow-x: scroll;
+            max-width: 100%;
+            min-width: 100px;
+        }
+        
+        comment {
+            color: var(--code-comment);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Continious Deployment for<br>TPT Webhosting</h1>
+        <p>Are you tired of uploading your homework again and again to terrible CPanel file manager?
+            Do you want stop this hassle and automate it? Then this guide is for you!</p>
+        <p>At the end of this guide you'll learn how to connect to the TPT Webhosting server with SSH, 
+            clone your repository to the server 
+            and automatically pull repository with each git push.</p>
+        
+        <h2 id="step1">1. Generate new SSH keys</h2>
+        <p>
+            <i>
+                If you already have SSH keys, you can use them and <a href="#step2">skip this step</a>.
+                <br>
+                Also checkout 
+                <a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent">this github page</a>
+                about creating SSH keys.
+            </i>
+        </p>
+        <p>Enter this command to your terminal and change <code>mart.mets@tptlive.ee</code> to your email
+            or just write anything you want.
+            <br>
+            <code>-t</code> is type of ssh key (<code>ed25519</code> is recommended)
+            <br>
+            <code>-C</code> sets a comment to public key.
+            <br>
+            You can just copy-paste code below if you don't care.</p>
+        <pre><code>$ ssh-keygen -t ed25519 -C "mart.mets@tptlive.ee"</code></pre>
+        <p>Just press enter three times and now you have 
+            your SSH private key at <code>~/.ssh/id_ed25519</code> and public key at <code>~/.ssh/id_ed25519.pub</code>.</p>
+        <img src="screenshot17.png">
+
+        <h2 id="step2">2. Install SSH key to webhosting server</h2>
+        <p>Next thing, is to just open <code>~/.ssh/id_ed25519.pub</code> file. You can open it manually, or with a command below.</p>
+        <pre><code>$ type ~/.ssh/id_ed25519.pub <comment># for windows</comment><br>$ cat ~/.ssh/id_ed25519.pub <comment># for linux/macos</comment></code></pre>
+        <p id="step2-copy">And copy the output that should look like this:</p>
+        <pre><code>ssh-ed25519 AAAA<comment>...</comment> mart.mets@tptlive.ee</code></pre>
+        <p>Then go to <a href="https://webhosting.tptlive.ee">webhosting.tptlive.ee</a> and login.</p>
+        <img src="screenshot4.png" style="width: 50%">
+        <p>And click the button <b>"Log in to cPanel".</b></p>
+        <img src="screenshot5.png">
+        <p>Scroll down until <b>"Security"</b> category, and open <b>"SSH Access"</b>.</p>
+        <img src="screenshot6.png">
+        <p>Click on <b>"Manage SSH Keys"</b>.</p>
+        <img src="screenshot7.png" style="width: 50%">
+        <p>And then <b>"Import Key"</b>.</p>
+        <img src="screenshot8.png" style="width: 50%">
+        <p>Paste your public SSH key that you have copied <a href="#step2-copy">before</a> and paste it into folowing text box. And press <b>"Import"</b>!</p>
+        <img src="screenshot9.png">
+        <p>But we are not done yet! We still need to activate our public key.<br>
+            Click on <b>"Manage"</b> button.</p>
+        <img src="screenshot10.png">
+        <p>And then click on <b>"Authorize"</b>.</p>
+        <img src="screenshot11.png">
+        <p>And you now we are done with our SSH keys. 🎉 <br><i style="float: right;">But not for too long...</i></p>
+
+        <h2 id="step3">3. Setting up a Github repository</h2>
+        <p>First lets create a new public repository on Github.</p>
+        <img src="screenshot1.png" style="width: 50%">
+        <p>Write as name <code>your-group-site</code>.
+            For example I have chose <code>ta22v-site</code>. 
+            You can choose any name you want.
+            And for easier setup, I recommend to make it public.
+        </p>
+        <img src="screenshot2.png">
+        <p>And create your brand new repository! <img src="screenshot3.png" style="width: 25%"></p>
+        <p>Clone your repository to your computer, add some files like <code>index.html</code> to the repository, 
+            or you can even move all of your works to your repository! And do not forget to push your changes.</p>
+        <img src="screenshot13.png">
+
+        <h2 id="step4">4. Clone the repository to TPT Webhosting</h2>
+        First, we need to login with ssh to our server. Use command below to connect to the server.
+        <pre><code>ssh <comment>[username]</comment>@<comment>[your domain]</comment>.webhosting.tptlive.ee -p 1157</code></pre>
+        <p>For example, this is command with my username and domain:</p>
+        <pre><code>ssh rhvoemhx@retr0.webhosting.tptlive.ee -p 1157</code></pre>
+        <p>You can find your username and domain in cPanel at the right side under <b>"General Information"</b></p>
+        <p style="text-align: center;"><img src="screenshot14.png" style="width: 50%">
+            <small>For me my username is <code>rhvoemhx</code> and<br>my domain is <code>retr0.webhosting.tptlive.ee</code></small></p>
+        <p>After successfully connecting to server, you need to clone your repository
+            to <code>public_html/<comment>&lt;some_name&gt;</comment></code> folder,
+            for example <code>public_html/github</code>.</p>
+        <pre><code>$ git clone https://github.com/<comment>your_repository</comment> public_html/github</code></pre>
+        <img src="screenshot15.png" style="width: 100%;">
+        <p>After cloning your repository you can check if you have your files with <code>ls -la</code></p>
+        <img src="screenshot16.png" style="width: 100%;">
+        
+        <h2 id="step5">5. Making Continious Deployment</h2>
+        <p>We will use <a href="https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions">Github Actions</a> 
+            to create a script that on every push to repository will pull repository on the server.
+            All you'll need to do is to create a new file in your repository, and push changes.</p>
+        <p>Create a new file <code>.github/workflows/deploy.yml</code> in your repository.</p>
+        <pre><code>on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install SSH keys
+      <comment># check this thread to understand why its needed:
+      # https://stackoverflow.com/a/70447517</comment>
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa 
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+    - name: connect and pull
+      run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} -p ${{ secrets.SSH_PORT }} \
+        "cd ${{ vars.WORK_DIR }} && git checkout main && git pull && exit"
+
+    - name: Cleanup SSH keys
+      run: rm -rf ~/.ssh</code></pre>
+        <p><small>Or download <a href="https://raw.githubusercontent.com/dankmolot/tptlive/main/.github/workflows/deploy.yml">deploy.yml from here</a>.<br>
+            Also maybe you'll need to change <code>main</code> to <code>master</code> if you have it as default branch.</small></p>
+        <p>And push it!</p>
+        <p>But wait, why have it failed?</p>
+        <img src="screenshot18.png">
+        <p>Because your repository still does not have any variables and secrets, so lets create them!</p>
+        <p>Go to <b>"Settings"</b> tab in your repository. 
+            Under <b>"Security"</b> category you will find 
+            <b>"Secrets and variables"</b> and under it will <b>"Actions"</b>.</p>
+        <img src="screenshot19.png" style="width: 50%;">
+        <p>Lets create <b>"New repository secret"</b>s first.</p>
+        <img src="screenshot20.png">
+        <p>First secret will be named <code>SSH_PRIVATE_KEY</code>.<br>
+            Paste your SSH private key (probably in <code>~/.ssh/id_ed25519</code>) into <b>"Secret"</b> field.<br>
+            If you don't remember how to get your SSH private key, check <a href="#step2">step 2</a>.</p>
+        <img src="screenshot21.png">
+        <p>Second one is <code>SSH_USER</code> is your username in cPanel.</p>
+        <img src="screenshot22.png" style="width: 50%;">
+        <p><code>SSH_HOST</code> is just your domain name.</p>
+        <img src="screenshot23.png" style="width: 50%">
+        <p>And <code>SSH_PORT</code> is just a port of SSH server. For TPT Webhosting it is <code>1157</code>.</p>
+        <img src="screenshot24.png" style="width: 50%">
+        <p>After adding all secrets we need also to add one variable.
+            Switch tab from <b>"Secrets"</b> to <b>"Variables"</b>.</p>
+        <img src="screenshot25.png">
+        <p>For variable <code>WORK_DIR</code> just paste where is stored git repository on the server<br>
+            For me it is stored in <code>~/public_html/github</code>.</p>
+        <img src="screenshot26.png">
+        <p>And push some more changes!</p>
+        <img src="screenshot27.png" style="width: 50%;">
+        <br>
+        <img src="screenshot28.png">
+        <p>And if everything works, then you should see your changes on the server! 🎉</p>
+        <img src="screenshot29.png" style="width: 100%;">
+
+        <h2>Outro</h2>
+        <p>If you had any troubles, feel free to contact your teacher and ask what's wrong.<br>
+            Hope this guide helped you with setting up your first Continious Deployment.</p>
+        <p>Made by Daniel Carpineanu, TA-22V<span style="float:right">for Maarja Käsk</span></p>
+    </div>
+</body>
+</html>
