@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paigutamine 4 - Flex ja semantilised elemendid</title>
+    <script>
+        function myFunction() {
+          alert("I am an alert box!");
+        }
+        </script>
+    <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+    <style>
+        body {
+            font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        * {
+            box-sizing: border-box;
+        }
+
+        footer {
+            background-color: darkslateblue;
+            color: white;
+            padding: 1rem;
+            border-radius: 30px;
+            text-align: center;
+        }
+
+        header {
+            background-color: cornflowerblue;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        header>nav {
+            color: gold;
+        }
+
+        main {
+            display: flex;
+            background-color: pink;
+            border-radius: 30px;
+            padding: 0.5rem;
+            flex-direction: column;
+        }
+
+        /* + vahetult järgnev sama taseme element https://developer.mozilla.org/en-US/docs/Web/CSS/Next-sibling_combinator */
+        h1+p {
+            color: blueviolet;
+        }
+
+        /* ~ sellele järgnev esimene selle taseme element
+        https://developer.mozilla.org/en-US/docs/Web/CSS/Subsequent-sibling_combinator 
+        vahel võib olla midagi muud ka
+        */
+        h1~a {
+            color: pink;
+            font-size: 1.4em;
+        }
+
+        /* > child https://developer.mozilla.org/en-US/docs/Web/CSS/Child_combinator */
+        /* main>article {
+            order: 2;
+            min-width: 12em;
+            flex: 1;
+            background-color: floralwhite;
+            padding: 1rem;
+            border-radius: 30px;
+        }
+
+        main>nav {
+            order: 1;
+            width: 200px;
+            background-color: coral;
+            padding: 1rem;
+            border-radius: 30px;
+        }
+
+        main>aside, .popover {
+            order: 3;
+            width: 200px;
+            background-color: aquamarine;
+            padding: 1rem;
+            border-radius: 30px;
+        } */
+
+        article {
+            background-color: palegreen;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+
+        section.main > article {
+            background-color: cornsilk;
+        }
+
+        section.main > aside {
+            width: 200px;
+            background-color: bisque;
+            border-radius: 30px;
+        }
+
+        main > section {
+            padding: 0.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        span {
+            background-color: aqua;
+        }
+
+        div>span {
+            background-color: yellow;
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        HEADER
+    </header>
+    <header>
+        <nav>navigation</nav>
+    </header>
+    <main>
+        <section class="main">
+            <article>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita dolores itaque esse vero minus commodi ipsam at laborum obcaecati repellat magni consequatur, quisquam mollitia ad a dolorem non dolore assumenda!
+            </article>
+            <aside>
+                <ul>
+                    <li>Aside 1</li>
+                    <li>Aside 2</li>
+                    <li>Aside 3</li>
+                </ul>
+            </aside>
+        </section>
+        <section>
+            <article>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illo inventore, dicta quae dignissimos praesentium natus, et rerum incidunt ab nisi debitis quisquam enim placeat pariatur suscipit reiciendis maxime sunt eligendi.</article>
+            <article>Sapiente repellendus voluptatum a iste, impedit ab consectetur aliquid libero odio reiciendis quo culpa facere corrupti perspiciatis dicta praesentium animi? Commodi rerum tempora numquam sed ad ex repellendus illo dolor!</article>
+            <article>Itaque animi mollitia quia earum exercitationem? Fuga consequuntur est, velit dignissimos ab officia corporis veniam labore quisquam, inventore quis quas cupiditate blanditiis. Vel quas nobis harum non, reiciendis cumque voluptas.</article>
+        </section>
+    </main>
+    <footer>
+        FOOTER
+    </footer>
+</body>
+
+</html>
