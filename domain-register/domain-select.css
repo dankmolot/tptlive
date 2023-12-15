@@ -1,0 +1,36 @@
+.domain-select {
+    display: flex;
+    margin: 6em auto 1em auto;
+    width: fit-content;
+}
+
+.domain-select input[type="text"] {
+    border:none;
+    background-image:none;
+    background-color:transparent;
+    box-shadow: none;
+    border-radius: var(--border-radius);
+    padding: 0 1em;
+}
+
+.domain-select .btn {
+    background: none;
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+.domain-select .btn:hover {
+    background: var(--background);
+}
+
+.domain-select .continue {
+    color: var(--main-color)
+}
+
+.domain-price {
+    margin: auto;
+    padding: 0.1em 1em;
+    width: fit-content;
+}
+
+
